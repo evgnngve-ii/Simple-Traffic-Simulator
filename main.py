@@ -16,16 +16,21 @@ def assignDirection(car):
     # This is a random number between [0,1). Use it to determine direction
     n = random.random()  # this version of RNG excludes 1 as a possibility. Is that important?
 
-    #invariant: n is always greater than or equal to 0.
-    if n <= x:
+
+    # if 0 <= n <= 100:
+    if 0 <= n <= x:
+
         car.direction = 'L'
-        print(str(car.carNumber) + "had random number: " + str(n) + "and direction " + car.direction)
-    elif x < n and n <= xPy:
+        print(str(car.carNumber) + " had random number: " + str(n) + " and direction " + car.direction)
+        print(0 <= n <= x)
+    elif x < n <= xPy:
         car.direction = 'S'
-        print(str(car.carNumber) + "had random number: " + str(n) + "and direction " + car.direction)
-    elif n > xPy and n <= 1:
+        print(str(car.carNumber) + " had random number: " + str(n) + " and direction " + car.direction)
+        print(x < n <= xPy)
+    elif xPy < n <= 1:
         car.direction = 'R'
-        print(str(car.carNumber) + "had random number: " + str(n) + "and direction " + car.direction)
+        print(str(car.carNumber) + " had random number: " + str(n) + " and direction " + car.direction)
+        print(xPy < n <= 1)
     else:
         print("ERROR: n = " + str(n) + " out of bounds?")
 
@@ -58,9 +63,9 @@ intersection = [True, True, True, True]
 for x in range(4):
     assignDirection(carLot[x])
 
-print("Directions assigned! The assigned directions")
+print("Directions assigned! The assigned directions are")
 
 for x in range(4):
-    print("Car #" + str(x) + " has direciont " + carLot[x].direction)
+    print("Car # " + str(x) + " has direction " + carLot[x].direction)
 
-print (str(xPy))
+#print (str(xPy))
