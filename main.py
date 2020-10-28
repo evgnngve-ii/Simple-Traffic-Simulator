@@ -14,7 +14,7 @@ currentIntervalNumber = 1 #What current turn we are on
 ################################ FUNCTIONS #############################
 
 # Prints the current state of the cars at the intersection
-def carLotState(carLot):
+def carLotState():
     for car in carLot:
         print("Car " + str(car.carIndex) + " W:" + str(car.waitTime) + " d:" + car.direction + " g:" + car.canGo)
 
@@ -82,12 +82,30 @@ for i in range(len(carLot)):
 
 ##############SIMULATION PHASE###################################################
 
+# Given a car Ci, if it can pass through the intersect, with the given intent and current intersect state, returns T
+# Returns false other wise
+def checkIntersection(car):
+
+    if car.direction == 'L':
+        print("Car# " + str(car.carIndex) + " going LEFT")
+
+    if car.direction == 'S':
+        print("Car# " + str(car.carIndex) + " going STRAIGHT")
+
+    if car.direction == 'R':
+        print("Car# " + str(car.carIndex) + " going RIGHT")
+
+
 #Run 10 times
 def intervalRun(carOrdering): # ToDo
     pass
 
 for x in range(intervalLimit): #ToDo
     intervalRun(carOrdering)
+
+carLotState()
+for i in range(len(carLot)):
+    checkIntersection(carLot[i])
 
 
 
