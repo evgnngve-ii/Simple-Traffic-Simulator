@@ -5,8 +5,13 @@ from queue import PriorityQueue
 x = 0.33333333333333
 y = 0.33333333333333
 
+# Counters
+intervalLimit = 10  # Amount of intervals in a simulation run
+totalNumberOfCarsPassed = 0  # Amount of cars that passed in the entire run
+currentIntervalNumber = 1 #What current turn we are on
 
-################################FUNCTIONS#############################
+
+################################ FUNCTIONS #############################
 
 # Prints the current state of the cars at the intersection
 def carLotState(carLot):
@@ -19,15 +24,15 @@ def assignDirection(n):
     d = 'D'
 
     if n <= x:
-        #print("Left turn")
+        # print("Left turn")
         d = 'L'
 
     if x < n and n <= x + y:
-        #print("Straight")
+        # print("Straight")
         d = 'S'
 
     if x + y < n and n <= 1:
-        #print("Right turn")
+        # print("Right turn")
         d = 'R'
 
     return d
@@ -62,20 +67,29 @@ carLot = [carOne, carTwo, carThree, carFour]
 for i in range(len(carLot)):
     carLot[i].direction = assignDirection(random.random())
 
-#Car rank will
+# Car rank will
 # Do ordering of cars     #Stretch Goal: Implement the more robust way of the ordering
 #
 carOrdering = PriorityQueue(4)
 for i in range(len(carLot)):
-    adjustIndex = -(carLot[i].carIndex) #make index value so that we can prioritize lower indexes
-    carRank = (carLot[i].waitTime + adjustIndex) # Calculate the rank of the given car; Wait time + lower index
-    #print("CAR#"+str(i)+" has rank of " + str(carRank))
+    adjustIndex = -(carLot[i].carIndex)  # make index value so that we can prioritize lower indexes
+    carRank = (carLot[i].waitTime + adjustIndex)  # Calculate the rank of the given car; Wait time + lower index
+    # print("CAR#"+str(i)+" has rank of " + str(carRank))
     # Multiply by -1 so that priority queue puts the "negative-most" values at top
-    carOrdering.put(-carRank, str(i)) #More wait time => more negative => More priority
+    carOrdering.put(-carRank, str(i))  # More wait time => more negative => More priority
 
-#carLotState(carLot)
+# carLotState(carLot)
 
 ##############SIMULATION PHASE###################################################
+
+#Run 10 times
+def intervalRun(carOrdering): # ToDo
+    pass
+
+for x in range(intervalLimit): #ToDo
+    intervalRun(carOrdering)
+
+
 
 
 ###############DEBUGGING STUFF################
