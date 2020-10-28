@@ -1,71 +1,85 @@
 import random
+from queue import PriorityQueue
 
 # Probability fine tuners for: 0 <= N <= x and x < N <= x+y and x+y <= 1
-x = 0.33333333333333333333
-y = 0.33333333333333333333
-xPy = x + y
+x = 0.33333333333333
+y = 0.33333333333333
 
 
-# Given a Car object c, we assign it a direction based off of a probability
-# Lot number 0 = carOne, lotNumber 1 = carTwo, etc
-# note to self; Python is pass by reference
-def assignDirection(car):
-    # print("Car#: " + str(car.carNumber))
-    # print(random.random())
+################################FUNCTIONS#############################
 
-    # This is a random number between [0,1). Use it to determine direction
-    n = random.random()  # this version of RNG excludes 1 as a possibility. Is that important?
+# Prints the current state of the cars at the intersection
+def carLotState(carLot):
+    for car in carLot:
+        print("Car " + str(car.carIndex) + " W:" + str(car.waitTime) + " d:" + car.direction + " g:" + car.canGo)
 
 
-    # if 0 <= n <= 100:
+# Given a random number, deduce the direction based off our current x,y parameters.
+def assignDirection(n):
+    d = 'D'
+
     if n <= x:
+        #print("Left turn")
+        d = 'L'
 
-        car.direction = 'L'
-        print(str(car.carNumber) + " had random number: " + str(n) + " and direction " + car.direction)
-        #print(0 <= n <= x)
-    elif x < n or n <= xPy:
-        car.direction = 'S'
-        print(str(car.carNumber) + " had random number: " + str(n) + " and direction " + car.direction)
-        #print(x < n <= xPy)
-    elif n > xPy or n <= 1:
-        car.direction = 'R'
-        print(str(car.carNumber) + " had random number: " + str(n) + " and direction " + car.direction)
-        #print(xPy < n <= 1)
-    else:
-        print("ERROR: n = " + str(n) + " out of bounds?")
+    if x < n and n <= x + y:
+        #print("Straight")
+        d = 'S'
+
+    if x + y < n and n <= 1:
+        #print("Right turn")
+        d = 'R'
+
+    return d
 
 
 # Define a "car" w/ waitTime (w), direction (d), canGo(g)
 class Car:
-    def __init__(self, waitTime, direction, canGo, carNumber):
+    def __init__(self, waitTime, direction, canGo, carIndex):
         self.waitTime = waitTime
         self.direction = direction
         self.canGo = canGo
-        self.carNumber = carNumber  # this one is to just id the car
+        self.carIndex = carIndex  # this one is to just id the car
 
 
-# Initialize our cars<--------------
+##################INITIALIZE PHASE:################################################
+# Initialize the intersection
+# intersection = [A,B,C,D]
+intersection = [True, True, True, True]
+
+# Initialize our cars
 # Y and are just empty placeholders
 carOne = Car(0, 'D', 'G', 0)
 carTwo = Car(0, 'D', 'G', 1)
 carThree = Car(0, 'D', 'G', 2)
 carFour = Car(0, 'D', 'G', 3)
 
-# Put cars into array for easier programming
-# 0,1,2,3
+# Store cars into array for easier programming
+#           0,      1,       2,         3
 carLot = [carOne, carTwo, carThree, carFour]
 
-# Initialize the intersection
-# intersection = [A,B,C,D]
-intersection = [True, True, True, True]
-
 # Assign an initial direction for each car
-for x in range(4):
-    assignDirection(carLot[x])
+for i in range(len(carLot)):
+    carLot[i].direction = assignDirection(random.random())
 
-print("Directions assigned! The assigned directions are")
+#Car rank will
+# Do ordering of cars     #Stretch Goal: Implement the more robust way of the ordering
+#
+carOrdering = PriorityQueue(4)
+for i in range(len(carLot)):
+    adjustIndex = -(carLot[i].carIndex) #make index value so that we can prioritize lower indexes
+    carRank = (carLot[i].waitTime + adjustIndex) # Calculate the rank of the given car; Wait time + lower index
+    #print("CAR#"+str(i)+" has rank of " + str(carRank))
+    # Multiply by -1 so that priority queue puts the "negative-most" values at top
+    carOrdering.put(-carRank, str(i)) #More wait time => more negative => More priority
 
-for x in range(4):
-    print("Car # " + str(x) + " has direction " + carLot[x].direction)
+#carLotState(carLot)
 
-#print (str(xPy))
+##############SIMULATION PHASE###################################################
+
+
+###############DEBUGGING STUFF################
+# print("Directions assigned! The assigned directions are")
+# for x in range(4):
+#    print("Car # " + str(x) + " has direction " + carLot[x].direction)
+# print (str(xPy))
