@@ -50,7 +50,7 @@ class Car:
 ##################INITIALIZE PHASE:################################################
 # Initialize the intersection; 0 is that part of the road isn't occupied; 1 means it is.
 # intersection = [A,B,C,D]
-intersection = [0,0,0,0]
+intersection = [0,0,1,0]
 
 # Initialize our cars
 # D and G are just empty placeholders
@@ -87,44 +87,50 @@ for i in range(len(carLot)):
 # Checks if the car going Left is at position c1,c2,c3,c4 and if it can go
 def canTurnLeft(car):  # 2a ...(Can car at current position go, given intersection state?)
     if car.carIndex == 0:  # If car is C1 going left #0 == 0:
-        if intersection[0] == 0:
-            print("A is free")
-            if intersection[1] == 0:
-                print("B is free")
-                if intersection[3] == 0:
-                    print("D is free")
-                    print("Car C1 sucessfully turned Left")
-                    return "True" #just set the field to True
+        if intersection[0] == intersection[1] == intersection[3] == 0:
+                #print("Car C1 sucessfully turned Left")
+                return True #just set the field to True
     if car.carIndex == 1:  # If car is C2 going left
-        pass
+        if intersection[1] == intersection[2] == intersection[3] == 0:
+            return True
     if car.carIndex == 2:  # If car is C3 going left
-        pass
+        if intersection[0] == intersection[2] == intersection[3] == 0:
+            return True
     if car.carIndex == 3:  # If car is C4 going left
-        pass
+        if intersection[0] == intersection[1] == intersection[2] ==0:
+            return True
 
 
 # Checks if the car going Right is at position c1,c2,c3,c4 and if it can go
 def canTurnRight(car):  # 2b
     if car.carIndex == 0:  # If car is C1 going right
-        pass
+        if intersection[3] == 0:
+            return True
     if car.carIndex == 1:  # If car is C2 going right
-        pass
+        if intersection[2] == 0:
+            return True
     if car.carIndex == 2:  # If car is C3 going right
-        pass
+        if intersection[0] == 0:
+            return True
     if car.carIndex == 3:  # If car is C4 going right
-        pass
+        if intersection[1] == 0:
+            return True
 
 
 # Checks if the car going Straight is at position c1,c2,c3,c4 and if it can go
 def canTurnStraight(car):  # 2c
     if car.carIndex == 0:  # If car is C1 going straight
-        pass
+        if intersection[1] == intersection[3] == 0:
+            return True
     if car.carIndex == 1:  # If car is C2 going straight
-        pass
+        if intersection[2] == intersection[3] == 0:
+            return True
     if car.carIndex == 2:  # If car is C3 going straight
-        pass
+        if intersection[0] == intersection[2] == 0:
+            return True
     if car.carIndex == 3:  # If car is C4 going straight
-        pass
+        if intersection[0] == intersection[1] == 0:
+            return True
 
 
 # Checks the direction of the car, and will use a helper function to determine if the car can pass, from it's position.
@@ -145,12 +151,16 @@ def checkDirection(car):  # (1) If we are going L (or S or R)...
 
 
 #print("car 1 is going " + str(carLot[0].direction) + ". It is: " + checkDirection(carLot[0]))
-TestCarC1Left = Car(0, 'L', 'G', 0)
+TestCarC1 = carLot[2]
 
-booleanCheck = (checkDirection(TestCarC1Left))
+###What do we do if it's false?
+booleanCheck = (checkDirection(TestCarC1))
 #didPass = str(checkDirection(TestCarC1Left))
 
 print(booleanCheck)
+
+if booleanCheck == None:
+    print("Car didnt pass")
 #print(didPass)
 
 #print("On an empty intersection, car 1 going left : " + didPass)
