@@ -102,7 +102,7 @@ def updateLeft(carPassed):
         intersection[0] = 1
         intersection[1] = 1
         intersection[2] = 1
-
+ 
 def updateRight(carPassed):
     if carPassed.carIndex == 0:  # If car is C1 going right
          intersection[3] == 1
