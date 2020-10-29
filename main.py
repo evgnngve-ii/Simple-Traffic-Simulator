@@ -4,6 +4,7 @@ from queue import PriorityQueue
 # intersection = [A,B,C,D]
 intersection = [0, 0, 0, 0]
 
+
 # Probability fine tuners for: 0 <= N <= x and x < N <= x+y and x+y <= 1
 x = 0.33333333333333
 y = 0.33333333333333
@@ -11,8 +12,12 @@ y = 0.33333333333333
 # Counters
 intervalLimit = 10  # Amount of intervals in a simulation run
 totalNumberOfCarsPassed = 0  # Amount of cars that passed in the entire run
-currentIntervalNumber = 1  # What current turn we are on
-recordedPasses = ["dummy"]  # Filled with tuples; (car#, wait time, turn #)
+
+#Tracker: Each list has their index correspond to each of the other list; Use these lists to build the data set
+carIndex = []
+waitTime = []
+recordedInterval = []
+
 
 
 ################################ FUNCTIONS #############################
@@ -180,11 +185,12 @@ def calculateNextOrder():
 
 # Define a "car" w/ waitTime (w), direction (d), canGo(g)
 class Car:
-    def __init__(self, waitTime, direction, carPassed, carIndex):
+    def __init__(self, waitTime, direction, carPassed, carIndex, totalPasses):
         self.waitTime = waitTime
         self.direction = direction
         self.carPassed = carPassed
         self.carIndex = carIndex  # this one is to just id the car
+        self.totalPasses = totalPasses #Count amount of times crossed intersection for entirety of run
 
 
 ##################INITIALIZE PHASE:################################################
@@ -192,10 +198,10 @@ class Car:
 
 # Initialize our cars
 # D is just an empty placeholder
-carOne = Car(0, 'D', False, 0)
-carTwo = Car(0, 'D', False, 1)
-carThree = Car(0, 'D', False, 2)
-carFour = Car(0, 'D', False, 3)
+carOne = Car(0, 'D', False, 0, 0)
+carTwo = Car(0, 'D', False, 1, 0)
+carThree = Car(0, 'D', False, 2, 0)
+carFour = Car(0, 'D', False, 3, 0)
 
 # Store cars into array for easier programming
 #           0,      1,       2,         3
@@ -218,20 +224,22 @@ carOrdering = calculateNextOrder()
 
 # Run 10 times A SIMULATION GOES HERE
 
-def processACycle(carOrdering):
+def processACycle(carOrdering, intervalTracker):
     test = 1
     while not carOrdering.empty():  # While still cars in the order/heap
-        print(str(test))
-        test = test + 1
 
         next_car_index = carOrdering.get()  # Get the nth car
         next_car = carLot[next_car_index]
 
         if checkDirection(next_car):  # If car is able to pass
             # store data
-            #recordedPasses.insert([next_car.carIndex + 1, next_car.waitTime,currentIntervalNumber])  # Since we export data, I just add +1; car 0 becomes car 1, etc
-            recordedPasses
-            carsPassedThroughIntersection = carsPassedThroughIntersection + 1  # add to global counter
+            carIndex.append(next_car.carIndex + 1) #Store car ID; Add 1 for easier use outside of program
+            waitTime.append(next_car.waitTime)
+            recordedInterval.append(intervalTracker)
+
+
+            # Update data
+            next_car.totalPasses = next_car.totalPasses + 1
             next_car.carPassed = True  # set g to true
             next_car.waitTime = 0  # reset wait time to 0 for next iteration
             next_car.direction = assignDirection(random.random())  # Assign a new direction for next iteration
@@ -244,17 +252,14 @@ def processACycle(carOrdering):
             next_car.waitTime = next_car.waitTime + 1
             next_car.carPassed = False
 
-        currentIntervalNumber = currentIntervalNumber + 1
 
+
+intervalTracker = 1
 
 for x in range(intervalLimit): #run the simulation interval limit = 10 times...
-    processACycle(carOrdering)
+    processACycle(carOrdering, intervalTracker)
     carOrdering = calculateNextOrder()
+    intervalTracker = intervalTracker + 1
 
 print("FINSIHED")
 
-###############DEBUGGING STUFF################
-# print("Directions assigned! The assigned directions are")
-# for x in range(4):
-#    print("Car # " + str(x) + " has direction " + carLot[x].direction)
-# print (str(xPy))
