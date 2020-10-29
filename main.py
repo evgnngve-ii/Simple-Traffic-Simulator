@@ -50,7 +50,7 @@ class Car:
 ##################INITIALIZE PHASE:################################################
 # Initialize the intersection; 0 is that part of the road isn't occupied; 1 means it is.
 # intersection = [A,B,C,D]
-intersection = [0,1,0,0]
+intersection = [0,0,0,0]
 
 # Initialize our cars
 # D and G are just empty placeholders
@@ -93,7 +93,8 @@ def canTurnLeft(car):  # 2a ...(Can car at current position go, given intersecti
                 print("B is free")
                 if intersection[3] == 0:
                     print("D is free")
-                    return "True"
+                    print("Car C1 sucessfully turned Left")
+                    return "True" #just set the field to True
     if car.carIndex == 1:  # If car is C2 going left
         pass
     if car.carIndex == 2:  # If car is C3 going left
@@ -131,27 +132,28 @@ def canTurnStraight(car):  # 2c
 def checkDirection(car):  # (1) If we are going L (or S or R)...
     if car.direction == 'L':
         # print("Car# " + str(car.carIndex) + " going LEFT")
-        canTurnLeft(car)
+        #OK, we return True but dont do anything with it
+        return canTurnLeft(car)
 
     if car.direction == 'S':
         # print("Car# " + str(car.carIndex) + " going STRAIGHT")
-        canTurnStraight(car)
+        return canTurnStraight(car)
 
     if car.direction == 'R':
         # print("Car# " + str(car.carIndex) + " going RIGHT")
-        canTurnRight(car)
+        return canTurnRight(car)
 
 
 #print("car 1 is going " + str(carLot[0].direction) + ". It is: " + checkDirection(carLot[0]))
 TestCarC1Left = Car(0, 'L', 'G', 0)
 
 booleanCheck = (checkDirection(TestCarC1Left))
-didPass = str(checkDirection(TestCarC1Left))
+#didPass = str(checkDirection(TestCarC1Left))
 
 print(booleanCheck)
 #print(didPass)
 
-print("On an empty intersection, car 1 going left : " + didPass)
+#print("On an empty intersection, car 1 going left : " + didPass)
 
 
 # Run 10 times A SIMULATION GOES HERE
