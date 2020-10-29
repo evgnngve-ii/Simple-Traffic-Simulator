@@ -4,7 +4,6 @@ from queue import PriorityQueue
 # intersection = [A,B,C,D]
 intersection = [0, 0, 0, 0]
 
-
 # Probability fine tuners for: 0 <= N <= x and x < N <= x+y and x+y <= 1
 x = 0.33333333333333
 y = 0.33333333333333
@@ -13,11 +12,10 @@ y = 0.33333333333333
 intervalLimit = 10  # Amount of intervals in a simulation run
 totalNumberOfCarsPassed = 0  # Amount of cars that passed in the entire run
 
-#Tracker: Each list has their index correspond to each of the other list; Use these lists to build the data set
+# Tracker: Each list has their index correspond to each of the other list; Use these lists to build the data set
 carIndex = []
 waitTime = []
 recordedInterval = []
-
 
 
 ################################ FUNCTIONS #############################
@@ -149,6 +147,7 @@ def updateIntersection(carPassed):
     if carPassed.direction == 'R':
         updateRight(carPassed)
 
+
 # Given a random number, deduce the direction based off our current x,y parameters.
 def assignDirection(n):
     d = 'D'
@@ -164,23 +163,37 @@ def assignDirection(n):
     if x + y < n and n <= 1:
         # print("Right turn")
         d = 'R'
-
     return d
+
 
 # Will return a priority que with ordered cars in the current state
 # Do ordering of cars     #Stretch Goal: Implement the more robust way of the ordering
+
+#Calculate next order
+# ToDo
+# Essentially, we have
+# Remove all the stuff inside.
+# Really, just need to sort based off of the car's wait time and indexing (car 1 prioritizes over car 2, even if they both
+#   have a wait time of two. So to account for this we can just add 1/i, where i is the index from car i)
 def calculateNextOrder():
-    carOrdering = PriorityQueue(4)
-    for i in range(len(carLot)):
-        index = i;
-        adjustIndex = -(carLot[i].carIndex)  # make index value so that we can prioritize lower indexes
-        carRank = (carLot[i].waitTime + adjustIndex)  # Calculate the rank of the given car; Wait time + lower index
-        # print("CAR#"+str(i)+" has rank of " + str(carRank))
-        # Multiply by -1 so that priority queue puts the "negative-most" values at top
-        carOrdering.put(-carRank, str(index))  # More wait time => more negative => More priority
-    return carOrdering
+
+    #Can just ignore and delete all this code; plan to rewrite it; simple array ordering, just need to calculate the
+        #order of the cars by their wait time and index position.
+
+ #   carOrdering = PriorityQueue(4)
+ #   for i in range(len(carLot)):
+ #       index = i;
+ #       adjustIndex = -(carLot[i].carIndex)  # make index value so that we can prioritize lower indexes
+ #       carRank = (carLot[i].waitTime + adjustIndex)  # Calculate the rank of the given car; Wait time + lower index
+ #       # print("CAR#"+str(i)+" has rank of " + str(carRank))
+ #       # Multiply by -1 so that priority queue puts the "negative-most" values at top
 
 
+
+#        print("Rank: " + str(-carRank) + ", Assigned index: " + str(i))
+#        carOrdering.put(-carRank, str(index))  # More wait time => more negative => More priority
+#   return carOrdering
+    pass
 
 
 # Define a "car" w/ waitTime (w), direction (d), canGo(g)
@@ -190,7 +203,7 @@ class Car:
         self.direction = direction
         self.carPassed = carPassed
         self.carIndex = carIndex  # this one is to just id the car
-        self.totalPasses = totalPasses #Count amount of times crossed intersection for entirety of run
+        self.totalPasses = totalPasses  # Count amount of times crossed intersection for entirety of run
 
 
 ##################INITIALIZE PHASE:################################################
@@ -211,8 +224,8 @@ carLot = [carOne, carTwo, carThree, carFour]
 for i in range(len(carLot)):
     carLot[i].direction = assignDirection(random.random())
 
-
 carOrdering = calculateNextOrder()
+
 
 # carLotState(carLot)
 
@@ -229,17 +242,17 @@ def processACycle(carOrdering, intervalTracker):
     while not carOrdering.empty():  # While still cars in the order/heap
 
         next_car_index = carOrdering.get()  # Get the nth car
-        next_car = carLot[next_car_index]
+        # print(str(next_car_index))
+        next_car = carLot[next_car_index] ##bug here......
 
         if checkDirection(next_car):  # If car is able to pass
             # store data
-            carIndex.append(next_car.carIndex + 1) #Store car ID; Add 1 for easier use outside of program
+            carIndex.append(next_car.carIndex + 1)  # Store car ID; Add 1 for easier use outside of program
             waitTime.append(next_car.waitTime)
             recordedInterval.append(intervalTracker)
-
+            next_car.totalPasses = next_car.totalPasses + 1
 
             # Update data
-            next_car.totalPasses = next_car.totalPasses + 1
             next_car.carPassed = True  # set g to true
             next_car.waitTime = 0  # reset wait time to 0 for next iteration
             next_car.direction = assignDirection(random.random())  # Assign a new direction for next iteration
@@ -253,13 +266,11 @@ def processACycle(carOrdering, intervalTracker):
             next_car.carPassed = False
 
 
-
 intervalTracker = 1
 
-for x in range(intervalLimit): #run the simulation interval limit = 10 times...
+for x in range(intervalLimit):  # run the simulation interval limit = 10 times...
     processACycle(carOrdering, intervalTracker)
     carOrdering = calculateNextOrder()
     intervalTracker = intervalTracker + 1
 
 print("FINSIHED")
-
