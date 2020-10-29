@@ -81,34 +81,67 @@ for i in range(len(carLot)):
 # carLotState(carLot)
 
 ##############SIMULATION PHASE###################################################
+#Take note, index is also our position; AKA c1 on bottom, c2 on left, c3 on top, c4 on right.
 
-# Given a car Ci, if it can pass through the intersect, with the given intent and current intersect state, returns T
+#Checks if the car going Left is at position c1,c2,c3,c4 and if it can go
+def canTurnLeft(car): #2a
+    if car.carIndex == 0: #If car is C1
+        pass
+    if car.carIndex == 1: #If car is C2
+        pass
+    if car.carIndex == 2: #If car is C3
+        pass
+    if car.carIndex == 3: #If car is C4
+        pass
+
+# Checks if the car going Right is at position c1,c2,c3,c4 and if it can go
+def canTurnRight():#2b
+    if car.carIndex == 0:
+        pass
+    if car.carIndex == 1:
+        pass
+    if car.carIndex == 2:
+        pass
+    if car.carIndex == 3:
+        pass
+
+#Checks if the car going Straight is at position c1,c2,c3,c4 and if it can go
+def canTurnStraight():#2c
+    if car.carIndex == 0:
+        pass
+    if car.carIndex == 1:
+        pass
+    if car.carIndex == 2:
+        pass
+    if car.carIndex == 3:
+        pass
+
+
+# Checks the direction of the car, and will use a helper function to determine if the car can pass, from it's position.
 # Returns false other wise
-def checkIntersection(car):
-
+def checkDirection(car): #(1)
     if car.direction == 'L':
-        print("Car# " + str(car.carIndex) + " going LEFT")
+        #print("Car# " + str(car.carIndex) + " going LEFT")
+        canTurnLeft(car)
 
     if car.direction == 'S':
-        print("Car# " + str(car.carIndex) + " going STRAIGHT")
+        #print("Car# " + str(car.carIndex) + " going STRAIGHT")
 
     if car.direction == 'R':
-        print("Car# " + str(car.carIndex) + " going RIGHT")
+        #print("Car# " + str(car.carIndex) + " going RIGHT")
 
 
-#Run 10 times
-def intervalRun(carOrdering): # ToDo
-    pass
-
-for x in range(intervalLimit): #ToDo
-    intervalRun(carOrdering)
-
-carLotState()
-for i in range(len(carLot)):
-    checkIntersection(carLot[i])
+print("car 1 is going " + str(carLot[0].direction) + ". It is: " + checkDirection(carLot[0]))
 
 
 
+
+#Run 10 times A SIMULATION GOES HERE
+# def intervalRun(carOrdering): # ToDo
+  # pass
+
+#for x in range(intervalLimit): #ToDo
+ #   intervalRun(carOrdering)
 
 ###############DEBUGGING STUFF################
 # print("Directions assigned! The assigned directions are")
