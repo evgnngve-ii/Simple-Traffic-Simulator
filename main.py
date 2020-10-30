@@ -11,7 +11,7 @@ x = 0.33333333333333
 y = 0.33333333333333
 
 # Counters
-intervalLimit = 30  # Amount of intervals in a simulation run
+intervalLimit = 300  # Amount of intervals in a simulation run
 totalNumberOfCarsPassed = 0  # Amount of cars that passed in the entire run
 amountOfLeftTurns = 0
 
@@ -234,8 +234,8 @@ carLot = [carOne, carTwo, carThree, carFour]
 for i in range(len(carLot)):
     carLot[i].direction = assignDirection(random.random())
 
-carOrdering = calculateNextOrder(carLot)
-
+#carOrdering = calculateNextOrder(carLot)
+random.shuffle(carOrdering)
 
 
 ##############SIMULATION PHASE###################################################
@@ -255,7 +255,7 @@ def processACycle(carOrdering, intervalTracker):
         if checkDirection(next_car):  # If car is able to pass
 
             if next_car.direction == 'L':
-                amountOfLeftTurns == 1
+                amountOfLeftTurns += 1
 
             # store data
             carIndex.append(next_car.carIndex + 1)  # Store car ID; Add 1 for easier use outside of program
