@@ -11,7 +11,7 @@ x = 0.33333333333333
 y = 0.33333333333333
 
 # Counters
-intervalLimit = 3000  # Amount of intervals in a simulation run
+intervalLimit = 10  # Amount of intervals in a simulation run
 totalNumberOfCarsPassed = 0  # Amount of cars that passed in the entire run
 
 # Tracker: Each list has their index correspond to each of the other list; Use these lists to build the data set
@@ -266,7 +266,10 @@ def processACycle(carOrdering, intervalTracker):
 
             # If car passed, update the intersection state
             # If the car passed, all tiles necessary are zero, thus, we just change corresponding tiles to 1
-            updateIntersection(next_car)
+            #updateIntersection(next_car)
+
+            #Simplification. After each interval, intersection becomes clear
+            intersection = [0,0,0,0]
 
         else:
             next_car.waitTime = next_car.waitTime + 1
@@ -305,9 +308,18 @@ print("Total cars passed: " + str(totalCarsPassed))
 
 # Print array info.
 print("PRINTING ARRAY DATA")
-print(*carIndex)        #Prints the car number
+print(*carIndex)        #Prints the car number that passed. #Bug: Car always passes. always sequence 1,2,3,4
 print(*waitTime)        #Prints the amount of time waited....buggy?
 print(*recordedInterval)#Prints the turn that the car successfully passed on
+
+print("ARRAY SIZES: MAKE SURE THEY'RE ONE-TO-ONE")
+
+#TAKE NOTE that while we have 10 intervals, we have 4 cars, and we could have 40 passes, meaning the lists are of size 40
+# In other words, size of arrays counts the amount of times each car passed.
+print(len(carIndex))
+print(len(waitTime))
+print(len(recordedInterval))
+
 
 # For example, the first column indicates that car 1 had a wait time of 0, and passed on the first turn
 # The last column would indicate that car 2 had a wait time of 0, and passed successfully on the 2nd turn
