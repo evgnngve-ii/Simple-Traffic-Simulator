@@ -3,6 +3,10 @@ import random
 # intersection = [A,B,C,D]
 intersection = [0, 0, 0, 0]
 
+#Car ordering sequence; Could not fix bugs in time. Simplified it to random sequence each time
+carOrdering = [0,1,2,3]
+
+
 # Auxiliary List; Tracks the sequence of cars for each iteration
 # auxSequenceList = []  # check what happens on first iteration
 
@@ -11,7 +15,7 @@ x = 0.33333333333333
 y = 0.33333333333333
 
 # Counters
-intervalLimit = 10  # Amount of intervals in a simulation run
+intervalLimit = 300  # Amount of intervals in a simulation run
 totalNumberOfCarsPassed = 0  # Amount of cars that passed in the entire run
 
 # Tracker: Each list has their index correspond to each of the other list; Use these lists to build the data set
@@ -193,8 +197,7 @@ def orderCarRanking():
     # Transfer the integer list back
     return newRankOrdering
 
-
-# Recalculates car ranking after an interation and adjusts the order of the car again
+# Recalculates car ranking after an interaction and adjusts the order of the car again
 # Returns the newly served up order based of each car's ranking
 def calculateNextOrder(car_lot):
     for car in carLot:
@@ -235,7 +238,9 @@ carLot = [carOne, carTwo, carThree, carFour]
 # Assign an initial direction for each car
 for i in range(len(carLot)):
     carLot[i].direction = assignDirection(random.random())
+
 carOrdering = calculateNextOrder(carLot)
+
 
 
 ##############SIMULATION PHASE###################################################
@@ -266,7 +271,7 @@ def processACycle(carOrdering, intervalTracker):
 
             # If car passed, update the intersection state
             # If the car passed, all tiles necessary are zero, thus, we just change corresponding tiles to 1
-            #updateIntersection(next_car)
+            updateIntersection(next_car)
 
             #Simplification. After each interval, intersection becomes clear
             intersection = [0,0,0,0]
@@ -279,17 +284,17 @@ def processACycle(carOrdering, intervalTracker):
 intervalTracker = 1
 
 # Run it at least once to start the interval
-carOrdering = calculateNextOrder(carLot)
+random.shuffle(carOrdering) #carOrdering = calculateNextOrder(carLot)
 #print("Initial order: ")
 # Debug print statement
 #for order in carOrdering:
    # print(str(order))
 #
-for x in range(intervalLimit-1):  # run the simulation interval limit = 10 times...
+for x in range(intervalLimit):  # run the simulation interval limit = 10 times...
     #print("________________________________________________________________")
     processACycle(carOrdering, intervalTracker)
     # After finishing an iteration, calculate the
-    carOrdering = calculateNextOrder(carLot)
+    random.shuffle(carOrdering) #carOrdering = calculateNextOrder(carLot)
     intervalTracker = intervalTracker + 1
 
     #print("Debug")
@@ -299,11 +304,14 @@ for x in range(intervalLimit-1):  # run the simulation interval limit = 10 times
 
 print("FINSIHED")
 
-print("Total intervals: " + str(intervalTracker))
+print("Total intervals: " + str(intervalTracker-1))
 
+#Don't really need to count amount of cars passed when we can count array size
+#But it is a good double check
 totalCarsPassed = 0;
 for car in carLot:
     totalCarsPassed = totalCarsPassed + car.carPassed
+
 print("Total cars passed: " + str(totalCarsPassed))
 
 # Print array info.
