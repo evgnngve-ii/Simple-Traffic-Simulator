@@ -1,8 +1,10 @@
 import random
-from queue import PriorityQueue
 
 # intersection = [A,B,C,D]
 intersection = [0, 0, 0, 0]
+
+# Auxiliary List; Tracks the sequence of cars for each iteration
+# auxSequenceList = []  # check what happens on first iteration
 
 # Probability fine tuners for: 0 <= N <= x and x < N <= x+y and x+y <= 1
 x = 0.33333333333333
@@ -19,6 +21,14 @@ recordedInterval = []
 
 
 ################################ FUNCTIONS #############################
+
+# Calculates a Car object's ranking given it's wait time and index
+# To simplify things, we prioritize wait time, and last in index (rather than earliest)
+# For example, c1 and c3 both have wait time 1. c3 would go first instead of c1 since (3+1)>(1+1)
+def calculateCarRanking(car):
+    rank = car.carIndex + car.waitTime
+    return rank
+
 
 # Prints the current state of the cars at the intersection
 def carLotState():
@@ -166,44 +176,47 @@ def assignDirection(n):
     return d
 
 
-# Will return a priority que with ordered cars in the current state
-# Do ordering of cars     #Stretch Goal: Implement the more robust way of the ordering
-
-#Calculate next order
-# ToDo
-# Essentially, we have
-# Remove all the stuff inside.
-# Really, just need to sort based off of the car's wait time and indexing (car 1 prioritizes over car 2, even if they both
-#   have a wait time of two. So to account for this we can just add 1/i, where i is the index from car i)
-def calculateNextOrder():
-
-    #Can just ignore and delete all this code; plan to rewrite it; simple array ordering, just need to calculate the
-        #order of the cars by their wait time and index position.
-
- #   carOrdering = PriorityQueue(4)
- #   for i in range(len(carLot)):
- #       index = i;
- #       adjustIndex = -(carLot[i].carIndex)  # make index value so that we can prioritize lower indexes
- #       carRank = (carLot[i].waitTime + adjustIndex)  # Calculate the rank of the given car; Wait time + lower index
- #       # print("CAR#"+str(i)+" has rank of " + str(carRank))
- #       # Multiply by -1 so that priority queue puts the "negative-most" values at top
+# Helper function for calculateNextOrder
+def orderCarRanking():
+    # New order consisting of the indices of the cars; # [2,1,3,0] means car3 goes, then car2, then car4, then car1
+    newRankOrdering = []
+    # Temporary list to calculate new order
+    calculateNewOrderingList = []
+    # put cars in a list of pairs, consisting of (Car #, Their rank)
+    # [('abc', 121),('abc', 231),('abc', 148), ('abc',221)]
+    for car in carLot:
+        calculateNewOrderingList.append((car.carIndex, car.rank))
+    # Sort car by their rank (key)
+    sorted(calculateNewOrderingList, key=lambda x: x[1])
+    # For each car in the sorted "ordering" list, in order, add their index (first entry) to newRankOrdering
+    # We want to extract the ordering of the car from the pairs and put them into an integer list
+    newRankOrdering = [rankPair[0] for rankPair in calculateNewOrderingList]
+    # Transfer the integer list back
+    return newRankOrdering
 
 
+# Recalculates car ranking after an interation and adjusts the order of the car again
+# Returns the newly served up order based of each car's ranking
+def calculateNextOrder(car_lot):
+    for car in carLot:
+        # Update each car's rank
+        carRank = calculateCarRanking(car)
+        car.rank = carRank
 
-#        print("Rank: " + str(-carRank) + ", Assigned index: " + str(i))
-#        carOrdering.put(-carRank, str(index))  # More wait time => more negative => More priority
-#   return carOrdering
-    pass
+    # Update the new ordering for the next iteration
+    auxSequenceList = orderCarRanking()
+    return auxSequenceList
 
 
 # Define a "car" w/ waitTime (w), direction (d), canGo(g)
 class Car:
-    def __init__(self, waitTime, direction, carPassed, carIndex, totalPasses):
+    def __init__(self, waitTime, direction, carPassed, carIndex, totalPasses, rank):
         self.waitTime = waitTime
         self.direction = direction
         self.carPassed = carPassed
         self.carIndex = carIndex  # this one is to just id the car
         self.totalPasses = totalPasses  # Count amount of times crossed intersection for entirety of run
+        self.rank = rank
 
 
 ##################INITIALIZE PHASE:################################################
@@ -211,10 +224,10 @@ class Car:
 
 # Initialize our cars
 # D is just an empty placeholder
-carOne = Car(0, 'D', False, 0, 0)
-carTwo = Car(0, 'D', False, 1, 0)
-carThree = Car(0, 'D', False, 2, 0)
-carFour = Car(0, 'D', False, 3, 0)
+carOne = Car(0, 'D', False, 0, 0, 0)
+carTwo = Car(0, 'D', False, 1, 0, 0)
+carThree = Car(0, 'D', False, 2, 0, 0)
+carFour = Car(0, 'D', False, 3, 0, 0)
 
 # Store cars into array for easier programming
 #           0,      1,       2,         3
@@ -223,11 +236,8 @@ carLot = [carOne, carTwo, carThree, carFour]
 # Assign an initial direction for each car
 for i in range(len(carLot)):
     carLot[i].direction = assignDirection(random.random())
+carOrdering = calculateNextOrder(carLot)
 
-carOrdering = calculateNextOrder()
-
-
-# carLotState(carLot)
 
 ##############SIMULATION PHASE###################################################
 # Take note, index is also our position; AKA c1 on bottom, c2 on left, c3 on top, c4 on right.
@@ -238,12 +248,10 @@ carOrdering = calculateNextOrder()
 # Run 10 times A SIMULATION GOES HERE
 
 def processACycle(carOrdering, intervalTracker):
-    test = 1
-    while not carOrdering.empty():  # While still cars in the order/heap
-
-        next_car_index = carOrdering.get()  # Get the nth car
-        # print(str(next_car_index))
-        next_car = carLot[next_car_index] ##bug here......
+    # Run each car; For each car...
+    for order in range(4):
+        # Get the nth car in the current sequence
+        next_car = carLot[carOrdering[order]]
 
         if checkDirection(next_car):  # If car is able to pass
             # store data
@@ -268,9 +276,27 @@ def processACycle(carOrdering, intervalTracker):
 
 intervalTracker = 1
 
+# Run it at least once to start the interval
+carOrdering = calculateNextOrder(carLot)
+print("Initial order: ")
+
+# Debug print statement
+for order in carOrdering:
+    print(str(order))
+
 for x in range(intervalLimit):  # run the simulation interval limit = 10 times...
     processACycle(carOrdering, intervalTracker)
-    carOrdering = calculateNextOrder()
+    # After finishing an iteration, calculate the
+    carOrdering = calculateNextOrder(carLot)
     intervalTracker = intervalTracker + 1
 
 print("FINSIHED")
+
+print("Total intervals: " + str(intervalTracker))
+
+totalCarsPassed = 0;
+for car in carLot:
+    totalCarsPassed = totalCarsPassed + car.carPassed
+print("Total cars passed: " + str(totalCarsPassed))
+
+# Print array info.
