@@ -11,7 +11,7 @@ x = 0.33333333333333
 y = 0.33333333333333
 
 # Counters
-intervalLimit = 10  # Amount of intervals in a simulation run
+intervalLimit = 3000  # Amount of intervals in a simulation run
 totalNumberOfCarsPassed = 0  # Amount of cars that passed in the entire run
 
 # Tracker: Each list has their index correspond to each of the other list; Use these lists to build the data set
@@ -21,7 +21,6 @@ recordedInterval = []
 
 
 ################################ FUNCTIONS #############################
-
 # Calculates a Car object's ranking given it's wait time and index
 # To simplify things, we prioritize wait time, and last in index (rather than earliest)
 # For example, c1 and c3 both have wait time 1. c3 would go first instead of c1 since (3+1)>(1+1)
@@ -187,7 +186,7 @@ def orderCarRanking():
     for car in carLot:
         calculateNewOrderingList.append((car.carIndex, car.rank))
     # Sort car by their rank (key)
-    sorted(calculateNewOrderingList, key=lambda x: x[1])
+    sorted(calculateNewOrderingList, key=lambda x: x[1], reverse=True)
     # For each car in the sorted "ordering" list, in order, add their index (first entry) to newRankOrdering
     # We want to extract the ordering of the car from the pairs and put them into an integer list
     newRankOrdering = [rankPair[0] for rankPair in calculateNewOrderingList]
@@ -278,17 +277,22 @@ intervalTracker = 1
 
 # Run it at least once to start the interval
 carOrdering = calculateNextOrder(carLot)
-print("Initial order: ")
-
+#print("Initial order: ")
 # Debug print statement
-for order in carOrdering:
-    print(str(order))
-
-for x in range(intervalLimit):  # run the simulation interval limit = 10 times...
+#for order in carOrdering:
+   # print(str(order))
+#
+for x in range(intervalLimit-1):  # run the simulation interval limit = 10 times...
+    #print("________________________________________________________________")
     processACycle(carOrdering, intervalTracker)
     # After finishing an iteration, calculate the
     carOrdering = calculateNextOrder(carLot)
     intervalTracker = intervalTracker + 1
+
+    #print("Debug")
+    #for order in carOrdering:
+    #    print(str(order))
+
 
 print("FINSIHED")
 
@@ -300,3 +304,13 @@ for car in carLot:
 print("Total cars passed: " + str(totalCarsPassed))
 
 # Print array info.
+print("PRINTING ARRAY DATA")
+print(*carIndex)        #Prints the car number
+print(*waitTime)        #Prints the amount of time waited....buggy?
+print(*recordedInterval)#Prints the turn that the car successfully passed on
+
+# For example, the first column indicates that car 1 had a wait time of 0, and passed on the first turn
+# The last column would indicate that car 2 had a wait time of 0, and passed successfully on the 2nd turn
+#1 2 3 4 1 2
+#0 0 0 0 0 0
+#1 1 1 1 2 2
