@@ -6,17 +6,14 @@ intersection = [0, 0, 0, 0]
 #Car ordering sequence; Could not fix bugs in time. Simplified it to random sequence each time
 carOrdering = [0,1,2,3]
 
-
-# Auxiliary List; Tracks the sequence of cars for each iteration
-# auxSequenceList = []  # check what happens on first iteration
-
 # Probability fine tuners for: 0 <= N <= x and x < N <= x+y and x+y <= 1
 x = 0.33333333333333
 y = 0.33333333333333
 
 # Counters
-intervalLimit = 300  # Amount of intervals in a simulation run
+intervalLimit = 30  # Amount of intervals in a simulation run
 totalNumberOfCarsPassed = 0  # Amount of cars that passed in the entire run
+amountOfLeftTurns = 0
 
 # Tracker: Each list has their index correspond to each of the other list; Use these lists to build the data set
 carIndex = []
@@ -32,12 +29,10 @@ def calculateCarRanking(car):
     rank = car.carIndex + car.waitTime
     return rank
 
-
 # Prints the current state of the cars at the intersection
 def carLotState():
     for car in carLot:
         print("Car " + str(car.carIndex) + " W:" + str(car.waitTime) + " d:" + car.direction + " g:" + car.carPassed)
-
 
 # Checks if the car going Left is at position c1,c2,c3,c4 and if it can go
 def canTurnLeft(car):  # 2a ...(Can car at current position go, given intersection state?)
@@ -258,6 +253,10 @@ def processACycle(carOrdering, intervalTracker):
         next_car = carLot[carOrdering[order]]
 
         if checkDirection(next_car):  # If car is able to pass
+
+            if next_car.direction == 'L':
+                amountOfLeftTurns == 1
+
             # store data
             carIndex.append(next_car.carIndex + 1)  # Store car ID; Add 1 for easier use outside of program
             waitTime.append(next_car.waitTime)
@@ -308,11 +307,13 @@ print("Total intervals: " + str(intervalTracker-1))
 
 #Don't really need to count amount of cars passed when we can count array size
 #But it is a good double check
-totalCarsPassed = 0;
-for car in carLot:
-    totalCarsPassed = totalCarsPassed + car.carPassed
 
-print("Total cars passed: " + str(totalCarsPassed))
+for car in carLot:
+      totalNumberOfCarsPassed += car.totalPasses
+
+print("Total cars passed: " + str(totalNumberOfCarsPassed))
+
+print("amountOfLeftTurns: " + str(amountOfLeftTurns))
 
 # Print array info.
 print("PRINTING ARRAY DATA")
